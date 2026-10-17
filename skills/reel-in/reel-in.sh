@@ -31,14 +31,22 @@ echo "Landed in $dest:"
 find "$dest" -type f ! -name '.*' | sort | while read -r f; do
   size="$(du -h "$f" | cut -f1)"
   info=""
-  dur="$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$f" 2>/dev/null || true)"
-  if [[ "$dur" =~ ^[0-9]+(\.[0-9]+)?$ ]]; then
-    secs="${dur%.*}"
-    info="$(printf '%dm%02ds' $((secs / 60)) $((secs % 60)))"
-  else
-    dims="$(ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=s=x:p=0 "$f" 2>/dev/null || true)"
-    [[ "$dims" =~ ^[0-9]+x[0-9]+$ ]] && info="$dims"
-  fi
+  ext="$(echo "${f##*.}" | tr '[:upper:]' '[:lower:]')"
+  case "$ext" in
+    jpg|jpeg|png|heic|heif|webp|gif|tif|tiff|bmp|dng|raw)
+      # sips (built into macOS) reads HEIC dimensions correctly; ffprobe sees a 1-frame video.
+      w="$(sips -g pixelWidth "$f" 2>/dev/null | awk '/pixelWidth/ {print $2}')"
+      h="$(sips -g pixelHeight "$f" 2>/dev/null | awk '/pixelHeight/ {print $2}')"
+      [ -n "$w" ] && [ -n "$h" ] && info="${w}x${h}"
+      ;;
+    *)
+      dur="$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$f" 2>/dev/null || true)"
+      if [[ "$dur" =~ ^[0-9]+(\.[0-9]+)?$ ]]; then
+        secs="${dur%.*}"
+        info="$(printf '%dm%02ds' $((secs / 60)) $((secs % 60)))"
+      fi
+      ;;
+  esac
   printf '  %s  %s  %s\n' "${f#$dest/}" "$size" "$info"
 done
 
