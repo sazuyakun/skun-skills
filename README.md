@@ -18,3 +18,9 @@ skills/
 ```
 
 Symlinks every skill into `~/.claude/skills/`, so Claude Code picks them up in every project. Edits here are live immediately; re-run after adding a new skill.
+
+## Skills
+
+| Skill | What it does |
+|---|---|
+| [reel-in](skills/reel-in/SKILL.md) | Pulls footage from Google Drive's `Footage Inbox` into `~/Videos/Footage/<project>/` via rclone, then removes it from Drive. |

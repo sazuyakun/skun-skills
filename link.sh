@@ -2,7 +2,7 @@
 # Symlink every skill in ./skills into ~/.claude/skills.
 set -euo pipefail
 
-repo="$(builtin cd "$(dirname "$0")" && pwd)"
+repo="$(cd "$(dirname "$0")" && pwd)"
 target="$HOME/.claude/skills"
 mkdir -p "$target"
 
