@@ -27,15 +27,19 @@ rclone move "$REMOTE" "$dest" \
 
 echo
 echo "Landed in $dest:"
+# Anything goes: videos get a duration, images get dimensions, other files just a size.
 find "$dest" -type f ! -name '.*' | sort | while read -r f; do
   size="$(du -h "$f" | cut -f1)"
+  info=""
   dur="$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$f" 2>/dev/null || true)"
-  if [ -n "$dur" ]; then
-    dur="$(printf '%.0f' "$dur")"
-    printf '  %s  %s  %dm%02ds\n' "${f#$dest/}" "$size" $((dur / 60)) $((dur % 60))
+  if [[ "$dur" =~ ^[0-9]+(\.[0-9]+)?$ ]]; then
+    secs="${dur%.*}"
+    info="$(printf '%dm%02ds' $((secs / 60)) $((secs % 60)))"
   else
-    printf '  %s  %s\n' "${f#$dest/}" "$size"
+    dims="$(ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=s=x:p=0 "$f" 2>/dev/null || true)"
+    [[ "$dims" =~ ^[0-9]+x[0-9]+$ ]] && info="$dims"
   fi
+  printf '  %s  %s  %s\n' "${f#$dest/}" "$size" "$info"
 done
 
 left="$(rclone lsf "$REMOTE" --files-only --recursive | wc -l | tr -d ' ')"

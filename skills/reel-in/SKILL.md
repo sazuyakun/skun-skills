@@ -1,11 +1,11 @@
 ---
 name: reel-in
-description: Pull recorded footage from the Google Drive "Footage Inbox" folder onto this Mac and delete it from Drive. Use when the user says things like "reel in", "pull my footage", "grab my videos from Drive", "I uploaded some clips", or wants to start editing videos they recorded on their phone.
+description: Pull any files (videos, photos, audio, assets, anything) from the Google Drive "Footage Inbox" folder onto this Mac and delete them from Drive. Use when the user says things like "reel in", "pull my footage", "grab my videos/images/assets from Drive", "I uploaded some files", or wants to start editing media they sent from their phone.
 ---
 
 # reel-in
 
-Moves every file in Google Drive's `Footage Inbox` folder to `~/Videos/Footage/<project>/` on this Mac, verifying each file before deleting it from Drive. Originals go to Drive's Trash, which Google empties after 30 days.
+Moves every file of any type (videos, images, audio, project assets) in Google Drive's `Footage Inbox` folder to `~/Videos/Footage/<project>/` on this Mac, verifying each file before deleting it from Drive. Originals go to Drive's Trash, which Google empties after 30 days.
 
 ## Run it
 
@@ -21,7 +21,7 @@ Moves every file in Google Drive's `Footage Inbox` folder to `~/Videos/Footage/<
 
 Report back briefly (the user is usually on their phone):
 - The destination folder path.
-- Each file with size and duration (the script prints these).
+- Each file with size, plus duration for video/audio or dimensions for images (the script prints these).
 - Any warning about files left in the inbox.
 
 Then offer to start editing with that folder as the source.
